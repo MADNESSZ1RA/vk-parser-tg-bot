@@ -1,45 +1,42 @@
-import telebot
-import requests
+import os
+import tkinter
+import tkinter as tk
+import tkinter.filedialog as fd
+from tkinter import *
 
-bot = telebot.TeleBot('tg bot token')
-token = 'vk api token'
-version = 5.131
-count = 25
+window = Tk()
+window.title("MADNESS sorter")
+window.geometry('200x150')
+window['bg'] = 'blue'
 
-def pars(message, idgroup):
-    response = requests.get('https://api.vk.com/method/wall.get?',
-                            params={
-                                'access_token': token,
-                                'v': version,
-                                'domain': idgroup,
-                                'count': count
-                            }
-                            )
-    data = response.json()['response']['items']
-    for i, post in reversed(list(enumerate(data))):
-        huy = str(i) + \
-              '\nавтор: ' + str(post['from_id']) + \
-              '\nкомментарии: ' + str(post['comments']['count']) + \
-              '\nтекст: ' + str(post['text']) + \
-              '\nдата: ' + str(post['date']) + \
-              '\nпросмотры: ' + str(post['views']['count'])
+exclusion = ""
+
+
+def choose_files():
+    path = fd.askdirectory(title="Открыть папку", initialdir="/")
+    files = [file for file in os.listdir(path) if os.path.isfile(os.path.join(path, file))]
+    extention = list(set([file.split('.')[-1] for file in files]))
+    for exclusion in extention:
+        exclusion = tkinter.Checkbutton(window, text=exclusion, variable=exclusion)
+        exclusion.pack()
+        print(exclusion)
+
+    if 
 
         try:
-            if len(data[i]['attachments'][0]['photo']) != 0:
-                huy += '\n' + str(
-                    data[i]['attachments'][0]['photo']['sizes'][- 1]['url'])
+            os.mkdir(os.path.join(path, b))
         except:
             pass
+        for bca in files:
+            try:
+                if bca.endswith(b):
+                    os.replace(os.path.join(path, bca), os.path.join(path, b, bca))
+            except:
+                pass
 
-        bot.send_message(message.chat.id, huy)
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    bot.send_message(message.chat.id, f'Приветствую, {message.from_user.first_name}')
-    bot.send_message(message.chat.id, f'Введите id группы')
+qwer = tkinter.Button(window, text='Выбрать файл', command=choose_files)
+qwer.pack()
 
-@bot.message_handler(content_types=['text'])
-def main(message):
-    pars(message, str(message.text))
-
-bot.polling()
+if __name__ == "__main__":
+    window.mainloop()
